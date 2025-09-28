@@ -19,9 +19,9 @@ services:
       PYTHONUNBUFFERED: "1"
       PYTHONDONTWRITEBYTECODE: "1"
     
-    # Health check
+    # Health check - simple process check instead of HTTP
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/mcp"]
+      test: ["CMD", "pgrep", "-f", "python sql_mcp.py"]
       interval: 30s
       timeout: 10s
       retries: 3

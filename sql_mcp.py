@@ -30,20 +30,31 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
         def connect_db():
             # Build connection string with environment variables
             server_with_port = f"{SERVER},{DB_PORT}" if DB_PORT != "1433" else SERVER
-            connection_string = (
-                f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-                f"SERVER={server_with_port};"
-                f"DATABASE={DATABASE};"
-                f"UID={USER};"
-                f"PWD={PASSWORD};"
-                f"Encrypt=no;"
-                f"TrustServerCertificate=yes;"
-                f"Connection Timeout={DB_TIMEOUT};"
-            )
-            # Log connection string without password for security
-            safe_connection_string = connection_string.replace(f"PWD={PASSWORD};", "PWD=***;")
-            logger.debug(f"Connection string: {safe_connection_string}")
-            return pyodbc.connect(connection_string, timeout=DB_TIMEOUT)
+            
+            # Try ODBC Driver 18 first, then fall back to 17
+            drivers_to_try = ["ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server"]
+            
+            for driver in drivers_to_try:
+                try:
+                    connection_string = (
+                        f"DRIVER={{{driver}}};"
+                        f"SERVER={server_with_port};"
+                        f"DATABASE={DATABASE};"
+                        f"UID={USER};"
+                        f"PWD={PASSWORD};"
+                        f"Encrypt=no;"
+                        f"TrustServerCertificate=yes;"
+                        f"Connection Timeout={DB_TIMEOUT};"
+                    )
+                    # Log connection string without password for security
+                    safe_connection_string = connection_string.replace(f"PWD={PASSWORD};", "PWD=***;")
+                    logger.debug(f"Trying connection with {driver}: {safe_connection_string}")
+                    return pyodbc.connect(connection_string, timeout=DB_TIMEOUT)
+                except pyodbc.Error as e:
+                    logger.debug(f"Failed to connect with {driver}: {e}")
+                    if driver == drivers_to_try[-1]:  # Last driver in list
+                        raise
+                    continue
             
         loop = asyncio.get_event_loop()
         conn = await loop.run_in_executor(None, connect_db)
