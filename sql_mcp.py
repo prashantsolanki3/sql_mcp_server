@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 import logging
 import sys
+import os
 import pyodbc
 import asyncio
 from mcp.server.fastmcp import Context, FastMCP
@@ -10,11 +11,13 @@ from mcp.server.fastmcp import Context, FastMCP
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("server_module")
 
-# Connection parameters
-SERVER = "74.235.211.131"
-DATABASE = "Demo Database NAV (7-0)"
-USER = "mcp"
-PASSWORD = "Qualia@321@"
+# Connection parameters from environment variables
+SERVER = os.getenv("DB_SERVER", "localhost")
+DATABASE = os.getenv("DB_DATABASE", "defaultdb")
+USER = os.getenv("DB_USER", "sa")
+PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_PORT = os.getenv("DB_PORT", "1433")
+DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", "15"))
 
 @asynccontextmanager
 async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
@@ -25,18 +28,22 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
     try:
         # Connect using a loop.run_in_executor to avoid blocking
         def connect_db():
+            # Build connection string with environment variables
+            server_with_port = f"{SERVER},{DB_PORT}" if DB_PORT != "1433" else SERVER
             connection_string = (
                 f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-                f"SERVER={SERVER};"
+                f"SERVER={server_with_port};"
                 f"DATABASE={DATABASE};"
                 f"UID={USER};"
                 f"PWD={PASSWORD};"
                 f"Encrypt=no;"
                 f"TrustServerCertificate=yes;"
-                f"Connection Timeout=15;"
+                f"Connection Timeout={DB_TIMEOUT};"
             )
-            logger.debug(f"Connection string: {connection_string}")
-            return pyodbc.connect(connection_string, timeout=15)
+            # Log connection string without password for security
+            safe_connection_string = connection_string.replace(f"PWD={PASSWORD};", "PWD=***;")
+            logger.debug(f"Connection string: {safe_connection_string}")
+            return pyodbc.connect(connection_string, timeout=DB_TIMEOUT)
             
         loop = asyncio.get_event_loop()
         conn = await loop.run_in_executor(None, connect_db)

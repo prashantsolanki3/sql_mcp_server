@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  sql-mcp-server:
+    build: .
+    container_name: sql-mcp-server
+    ports:
+      - "8000:8000"
+    environment:
+      # Database Configuration
+      DB_SERVER: "74.235.211.131"
+      DB_DATABASE: "Demo Database NAV (7-0)"
+      DB_USER: "mcp"
+      DB_PASSWORD: "Qualia@321@"
+      DB_PORT: "1433"
+      DB_TIMEOUT: "15"
+      
+      # Python Configuration
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/mcp"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # Optional: SQL Server service for local development
+  # Uncomment the section below if you want to run SQL Server locally
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: sql-server
+  #   environment:
+  #     ACCEPT_EULA: "Y"
+  #     SA_PASSWORD: "YourStrong@Passw0rd"
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - sqlserver_data:/var/opt/mssql
+  #   restart: unless-stopped
+
+# volumes:
+#   sqlserver_data:
