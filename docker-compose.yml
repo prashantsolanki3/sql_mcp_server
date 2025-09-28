@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   sql-mcp-server:
     build: .
@@ -18,14 +16,6 @@ services:
       # Python Configuration
       PYTHONUNBUFFERED: "1"
       PYTHONDONTWRITEBYTECODE: "1"
-    
-    # Health check - simple process check instead of HTTP
-    healthcheck:
-      test: ["CMD", "pgrep", "-f", "python sql_mcp.py"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     
     # Restart policy
     restart: unless-stopped

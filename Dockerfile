@@ -45,10 +45,6 @@ USER app
 # Expose port 8000 for HTTP transport
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/mcp || exit 1
-
 # Set default environment variables (non-sensitive only)
 ENV DB_SERVER=localhost \
     DB_DATABASE=defaultdb \
