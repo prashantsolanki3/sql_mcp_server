@@ -7,6 +7,14 @@ import pyodbc
 import asyncio
 from mcp.server.fastmcp import Context, FastMCP
 
+# Load environment variables from .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not installed, skip loading .env file
+    pass
+
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("server_module")
