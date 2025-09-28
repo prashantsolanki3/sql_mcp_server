@@ -11,8 +11,10 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("server_module")
 
 # Connection parameters
-SERVER = "LEGION\\SQLEXPRESS"
-DATABASE = "test"
+SERVER = "74.235.211.131"
+DATABASE = "Demo Database NAV (7-0)"
+USER = "mcp"
+PASSWORD = "Qualia@321@"
 
 @asynccontextmanager
 async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
@@ -27,10 +29,14 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
                 f"DRIVER={{ODBC Driver 17 for SQL Server}};"
                 f"SERVER={SERVER};"
                 f"DATABASE={DATABASE};"
-                f"Trusted_Connection=yes;"
+                f"UID={USER};"
+                f"PWD={PASSWORD};"
+                f"Encrypt=no;"
+                f"TrustServerCertificate=yes;"
+                f"Connection Timeout=15;"
             )
             logger.debug(f"Connection string: {connection_string}")
-            return pyodbc.connect(connection_string)
+            return pyodbc.connect(connection_string, timeout=15)
             
         loop = asyncio.get_event_loop()
         conn = await loop.run_in_executor(None, connect_db)
@@ -51,7 +57,7 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
 mcp = FastMCP("My MS SQL Integrated App", lifespan=app_lifespan)
 
 @mcp.tool()
-async def query_sql(ctx: Context, query: str = None) -> str:
+async def query_sql(ctx: Context, query: str | None = None) -> str:
     """
     Tool to query the SQL database with a custom query.
     
@@ -263,6 +269,7 @@ async def database_info(ctx: Context) -> str:
             f"Database Information:\n"
             f"Server: {SERVER}\n"
             f"Database: {info['database']}\n"
+            f"User: {USER}\n"
             f"Server Version: {info['version'].split('\\n')[0]}\n"
             f"Current Server Time: {info['current_time']}\n"
             f"Number of Tables: {info['table_count']}"
