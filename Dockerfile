@@ -31,8 +31,8 @@ COPY pyproject.toml uv.lock* ./
 # Install UV package manager for faster dependency resolution
 RUN pip install uv
 
-# Install Python dependencies
-RUN uv pip install --system -r pyproject.toml
+# Install Python dependencies using uv sync
+RUN uv sync --frozen
 
 # Copy application code
 COPY sql_mcp.py .
@@ -45,5 +45,5 @@ USER app
 # Expose port 8000 for HTTP transport
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "sql_mcp.py"]
+# Run the application using MCP CLI to expose stdio server on HTTP port 8000
+CMD ["uvx", "mcpo", "--port", "8000", "--", "uv", "run", "sql_mcp.py"]

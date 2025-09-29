@@ -255,7 +255,7 @@ async def list_odbc_drivers(ctx: Context) -> str:
     except Exception as e:
         return f"Error listing drivers: {str(e)}"
 
-@mcp.tool()
+# @mcp.tool()
 async def database_info(ctx: Context) -> str:
     """Get general information about the connected database"""
     try:
