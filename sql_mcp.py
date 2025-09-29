@@ -74,7 +74,11 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
 # Create an MCP server with the lifespan
 mcp = FastMCP("My MS SQL Integrated App", lifespan=app_lifespan)
 
-@mcp.tool()
+@mcp.tool(
+    name="query_sql",
+    description="Query the SQL database with a custom query. If no query is provided, a default query will be executed.",
+    title="Query SQL Database"
+)
 async def query_sql(ctx: Context, query: str | None = None) -> str:
     """
     Tool to query the SQL database with a custom query.
@@ -131,7 +135,11 @@ async def query_sql(ctx: Context, query: str | None = None) -> str:
         logger.error(f"Query execution error: {type(e).__name__}: {str(e)}")
         return f"Error: {str(e)}"
 
-@mcp.tool()
+@mcp.tool(
+    name="list_tables",
+    description="List all tables in the database that can be queried.",
+    title="List Database Tables",
+)
 async def list_tables(ctx: Context) -> str:
     """List all tables in the database that can be queried."""
     try:
@@ -154,7 +162,11 @@ async def list_tables(ctx: Context) -> str:
     except Exception as e:
         return f"Error listing tables: {str(e)}"
 
-@mcp.tool()
+@mcp.tool(
+    name="describe_table",
+    description="Get the structure of a specific table.",
+    title="Describe Table Structure",
+)
 async def describe_table(ctx: Context, table_name: str) -> str:
     """
     Get the structure of a specific table.
@@ -194,7 +206,11 @@ async def describe_table(ctx: Context, table_name: str) -> str:
     except Exception as e:
         return f"Error describing table: {str(e)}"
 
-@mcp.tool()
+# @mcp.tool(
+#     name="execute_nonquery",
+#     description="Execute a non-query SQL statement (INSERT, UPDATE, DELETE, etc.).",
+#     title="Execute Non-Query SQL"
+# )
 async def execute_nonquery(ctx: Context, sql: str) -> str:
     """
     Execute a non-query SQL statement (INSERT, UPDATE, DELETE, etc.).
@@ -235,7 +251,11 @@ async def execute_nonquery(ctx: Context, sql: str) -> str:
     except Exception as e:
         return f"Error executing SQL: {str(e)}"
 
-@mcp.tool()
+@mcp.tool(
+    name="list_odbc_drivers",
+    description="List available ODBC drivers on the system",
+    title="List ODBC Drivers"
+)
 async def list_odbc_drivers(ctx: Context) -> str:
     """List available ODBC drivers on the system"""
     try:
@@ -247,7 +267,11 @@ async def list_odbc_drivers(ctx: Context) -> str:
     except Exception as e:
         return f"Error listing drivers: {str(e)}"
 
-# @mcp.tool()
+@mcp.tool(
+    name="database_info",
+    description="Get general information about the connected database",
+    title="Database Information"
+)
 async def database_info(ctx: Context) -> str:
     """Get general information about the connected database"""
     try:
