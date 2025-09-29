@@ -2,6 +2,11 @@
 
 A FastMCP server that provides SQL database interaction tools via a conversational AI interface.
 
+RUN
+```bash
+uvx mcpo --port 8000 -- uv run sql_mcp.py
+```
+
 ## Overview
 
 This project creates a server that exposes MS SQL Server operations through a conversational AI interface. It uses the FastMCP framework to provide tools for querying and manipulating SQL data, allowing users to interact with databases using natural language.
