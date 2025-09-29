@@ -3,32 +3,10 @@ services:
     build: .
     container_name: sql-mcp-server
     ports:
-      - "8000:8000"
-    environment:
-      # Database Configuration
-      DB_SERVER: "74.235.211.131"
-      DB_DATABASE: "Demo Database NAV (7-0)"
-      DB_USER: "mcp"
-      DB_PASSWORD: "Qualia@321@"
-      DB_PORT: "1433"
-      DB_TIMEOUT: "15"
-      
-      # Python Configuration
-      PYTHONUNBUFFERED: "1"
-      PYTHONDONTWRITEBYTECODE: "1"
-    
+      - 8000:8000
+    env_file: .env
     # Restart policy
     restart: unless-stopped
-    
-    # Resource limits (optional)
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
 
   # Optional: SQL Server service for local development
   # Uncomment the section below if you want to run SQL Server locally

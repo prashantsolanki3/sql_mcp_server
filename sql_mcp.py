@@ -307,7 +307,7 @@ async def database_info(ctx: Context) -> str:
 if __name__ == "__main__":
     try:
         logger.info("Starting MCP server")
-        mcp.run("streamable-http")
+        mcp.run("stdio")
     except Exception as e:
         logger.critical(f"Server startup failed: {e}", exc_info=True)
         sys.exit(1)

@@ -45,12 +45,5 @@ USER app
 # Expose port 8000 for HTTP transport
 EXPOSE 8000
 
-# Set default environment variables (non-sensitive only)
-ENV DB_SERVER=localhost \
-    DB_DATABASE=defaultdb \
-    DB_USER=sa \
-    DB_PORT=1433 \
-    DB_TIMEOUT=15
-
 # Run the application
 CMD ["python", "sql_mcp.py"]
