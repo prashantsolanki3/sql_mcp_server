@@ -47,3 +47,4 @@ EXPOSE 8000
 
 # Run the application using MCP CLI to expose stdio server on HTTP port 8000
 CMD ["uvx", "mcpo", "--port", "8000", "--", "uv", "run", "sql_mcp.py"]
+# CMD ["uv", "run", "python", "sql_mcp.py"]
