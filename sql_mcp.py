@@ -141,7 +141,12 @@ async def query_sql(ctx: Context, query: str | None = None) -> str:
     title="List Database Tables",
 )
 async def list_tables(ctx: Context) -> str:
-    """List all tables in the database that can be queried."""
+    """
+    List all tables in the database that can be queried.
+    
+    Returns:
+        List of available tables as a string.
+    """
     try:
         conn = ctx.request_context.lifespan_context["conn"]
         
@@ -253,11 +258,16 @@ async def execute_nonquery(ctx: Context, sql: str) -> str:
 
 @mcp.tool(
     name="list_odbc_drivers",
-    description="List available ODBC drivers on the system",
+    description="List available ODBC drivers on the system.",
     title="List ODBC Drivers"
 )
 async def list_odbc_drivers(ctx: Context) -> str:
-    """List available ODBC drivers on the system"""
+    """
+    List available ODBC drivers on the system.
+    
+    Returns:
+        List of available ODBC drivers as a string.
+    """
     try:
         def get_drivers():
             return pyodbc.drivers()
@@ -269,11 +279,16 @@ async def list_odbc_drivers(ctx: Context) -> str:
 
 @mcp.tool(
     name="database_info",
-    description="Get general information about the connected database",
+    description="Get general information about the connected database.",
     title="Database Information"
 )
 async def database_info(ctx: Context) -> str:
-    """Get general information about the connected database"""
+    """
+    Get general information about the connected database.
+    
+    Returns:
+        Database information as a string.
+    """
     try:
         conn = ctx.request_context.lifespan_context["conn"]
         
