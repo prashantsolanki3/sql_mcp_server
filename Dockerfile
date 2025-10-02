@@ -45,8 +45,6 @@ USER app
 # Expose port 8000 for HTTP transport
 EXPOSE 8000
 
-ENV API_KEY=your_api_key_here
-
 # Run the application using MCP CLI to expose stdio server on HTTP port 8000
-CMD ["uvx", "mcpo", "--port", "8000", "--api-key", "${API_KEY}", "--", "uv", "run", "sql_mcp.py"]
+CMD ["uvx", "mcpo", "--port", "8000", "--", "uv", "run", "sql_mcp.py"]
 # CMD ["uv", "run", "python", "sql_mcp.py"]
